@@ -16,7 +16,7 @@
                             <div class="horizontal-tabs">
                                 <ul class="nav nav-tabs profile-tabs row customer-profile-tabs nav-tabs-horizontal">
                                     <?php foreach ($categories as $category) { ?>
-                                        <li class="<?php if($category['id'] === '1') echo 'active' ?>">
+                                        <li class="<?php if ($category['id'] === '1') echo 'active' ?>">
                                             <a href="#tab_category_<?php echo $category['id'] ?>"
                                                aria-controls="tab_category_<?php echo $category['id'] ?>"
                                                role="tab" data-toggle="tab"><?php echo $category['title'] ?></a>
@@ -26,7 +26,8 @@
                             </div>
                             <div class="tab-content">
                                 <?php foreach ($categories as $category) { ?>
-                                    <div role="tabpanel" class="tab-pane <?php if($category['id'] === '1') echo 'active' ?>"
+                                    <div role="tabpanel"
+                                         class="tab-pane <?php if ($category['id'] === '1') echo 'active' ?>"
                                          id="tab_category_<?php echo $category['id'] ?>">
                                         <table class="table table-clients dataTable no-footer dtr-inline">
                                             <thead>
@@ -39,32 +40,32 @@
                                             <th></th>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Morning card</td>
-                                                <td>7:00 - 12:00</td>
-                                                <td>1 месяц</td>
-                                                <td>1 520 000</td>
-                                                <td>Нет</td>
-                                                <td>
-                                                    <button class="btn btn-primary">
-                                                        <i class="fa fa-pencil"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Morning card</td>
-                                                <td>7:00 - 12:00</td>
-                                                <td>3 месяца</td>
-                                                <td>2 900 000</td>
-                                                <td>Нет</td>
-                                                <td>
-                                                    <button class="btn btn-primary">
-                                                        <i class="fa fa-pencil"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
+
+                                            <?php if (isset($subscribes) && $subscribes) { ?>
+                                                <?php foreach ($subscribes as $subscribe) { ?>
+                                                    <?php if ($subscribe['category_id'] === $category['id']) { ?>
+                                                        <tr>
+                                                            <td><?php echo $subscribe['id'] ?></td>
+                                                            <td><?php echo $subscribe['title'] ?></td>
+                                                            <td>
+                                                                <?php
+                                                                $time = json_decode($subscribe['time'], true);
+                                                                echo $time['from']['hour'] . ':' . $time['from']['minute'] . ' - ' . $time['to']['hour'] . ':' . $time['to']['minute'];
+                                                                ?>
+                                                            </td>
+                                                            <td><?php echo $subscribe['duration'] ?> месяц</td>
+                                                            <td><?php echo $subscribe['price'] ?></td>
+                                                            <td><?php echo $subscribe['frost_days'] ?></td>
+                                                            <td>
+                                                                <button class="btn btn-primary">
+                                                                    <i class="fa fa-pencil"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            <?php } ?>
+
                                             </tbody>
                                         </table>
                                     </div>
