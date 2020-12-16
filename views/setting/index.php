@@ -12,7 +12,9 @@
                         <hr class="hr-panel-heading"/>
                         <div style="margin-bottom: 3.5rem">
                             <?php include('category_button.php') ?>
-                            <?php include('create_subscribe_button.php') ?>
+                            <div class="">
+
+                            </div>
                         </div>
                         <div class="tabs-container-categories"></div>
                     </div>
@@ -31,7 +33,7 @@
                 placeholder="<?php echo _l('title_category') ?>"
                 required
             />
-            <button type="button" class="btn btn-danger btn-category-add"><i class="fa fa-trash"></i></button>
+            <button type="button" class="btn btn-danger btn-category-delete"><i class="fa fa-trash"></i></button>
         </div>
     `
 </script>

@@ -14,3 +14,26 @@
     font-size: 75px;
     margin: 2rem 0;
 }
+
+.time-container {
+    display: flex;
+    justify-content: center;
+}
+
+.time-container > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.time-container .time-label {
+    margin-right: 0.5rem;
+}
+
+.time-container .time-to .time-label {
+    margin-left: 1rem;
+}
+
+.time-container .time-control {
+    margin-right: 0.5rem;
+}

@@ -41,9 +41,9 @@ class ProcrmSubscribesCategories {
      * Добавить категорию
      * @param e
      */
-    addCategoryBlock(e) {
+    addCategoryBlock = (e) => {
         $('.add-category-block').append(block)
-            .find('.btn-category-add')
+            .find('.btn-category-delete')
             .click(this.deleteCategoryBlock)
     }
 

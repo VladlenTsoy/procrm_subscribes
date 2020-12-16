@@ -70,9 +70,6 @@ class Setting extends AdminController
      */
     public function subscribes($categoryId)
     {
-//        $this->app->get_table_data('subscribes', ['category_id' => $categoryId]);
-
-
         $aColumns = ['id', 'title', 'time', 'duration', 'price', 'frost_days'];
 
         $sIndexColumn = 'id';
@@ -85,7 +82,14 @@ class Setting extends AdminController
         foreach ($rResult as $aRow) {
             $row = [];
             for ($i = 0; $i < count($aColumns); $i++) {
-                if ($i === 2) {
+                if ($i === 1) {
+                    $_title = $aRow[$aColumns[$i]];
+                    $_title .= '<div class="row-options">';
+                    $_title .= '<a class="pointer">' . _l('edit') . '</a>';
+                    $_title .= ' | <a class="pointer text-danger">' . _l('delete') . '</a>';
+                    $_title .= '</div>';
+                    $row[] = $_title;
+                } elseif ($i === 2) {
                     $time = json_decode($aRow[$aColumns[$i]], true);
                     $_time = $time['from']['hour'] . ':' . $time['from']['minute'] . ' - ' . $time['to']['hour'] . ':' . $time['to']['minute'];
                     $row[] = $_time;
@@ -95,8 +99,6 @@ class Setting extends AdminController
                 } else
                     $row[] = $aRow[$aColumns[$i]];
             }
-            $options = icon_btn('#', 'pencil-square-o', 'btn-default', ['data-toggle' => 'modal', 'data-target' => '#customer_group_modal', 'data-id' => $aRow['id']]);
-            $row[] = $options .= icon_btn('clients/delete_group/' . $aRow['id'], 'remove', 'btn-danger _delete');
 
             $output['aaData'][] = $row;
         }
@@ -187,7 +189,7 @@ class Setting extends AdminController
 
         echo json_encode([
             'status' => 'success',
-            'html' => $this->load->view('setting/categories/form_categories', $data, true)
+            'html' => $this->load->view('setting/categories/form', $data, true)
         ]);
     }
 }
