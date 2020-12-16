@@ -12,12 +12,10 @@ class Setting extends AdminController
     public function index()
     {
         $categories = $this->category_model->getAll();
-        $subscribes = $this->subscribe_model->getAll();
 
         $data = [
             'title' => _l('settings'),
             'categories' => $categories,
-            'subscribes' => $subscribes
         ];
 
         $this->load->view('setting/index', $data);
@@ -33,6 +31,9 @@ class Setting extends AdminController
         $categories = isset($data['categories']) ? $data['categories'] : false;
         $createCategories = isset($data['create_categories']) ? $data['create_categories'] : false;
 
+        $ids = [];
+        $deleteIds = [];
+
         try {
             if ($categories) {
                 foreach ($categories as $key => $category) {
@@ -40,27 +41,24 @@ class Setting extends AdminController
                 }
 
                 $keys = array_keys($categories);
-                $this->category_model->delete($keys);
+                if (count($keys)) {
+                    $oldCategories = $this->category_model->getByNotIds($keys);
+                    $deleteIds = $arr = array_column($oldCategories, 'id');
+                    $this->category_model->delete($keys);
+                }
             }
 
             if ($createCategories)
                 foreach ($createCategories as $key => $category) {
-                    $this->category_model->create(['title' => $category]);
+                    $categoryId = $this->category_model->create(['title' => $category]);
+                    $ids[] = $categoryId;
                 }
-
-
-            $categories = $this->category_model->getAll();
-            $subscribes = $this->subscribe_model->getAll();
-
-            $dataView = [
-                'categories' => $categories,
-                'subscribes' => $subscribes
-            ];
 
             echo json_encode([
                 'status' => 'success',
                 'message' => _l('you_have_successfully_updated_the_categories'),
-                'html' => $this->load->view('setting/tabs/tabs', $dataView, true)
+                'categoryIds' => $ids,
+                'deleteCategoryIds' => $deleteIds
             ]);
         } catch (Exception $e) {
             echo json_encode(['status' => 'error', 'message' => $e]);
@@ -68,7 +66,7 @@ class Setting extends AdminController
     }
 
     /**
-     *
+     * @param $categoryId
      */
     public function subscribes($categoryId)
     {
@@ -80,7 +78,7 @@ class Setting extends AdminController
         $sIndexColumn = 'id';
         $sTable = db_prefix() . 'procrm_subscribes';
 
-        $result = data_tables_init($aColumns, $sIndexColumn, $sTable, [], ['AND category_id = '.$categoryId]);
+        $result = data_tables_init($aColumns, $sIndexColumn, $sTable, [], ['AND category_id = ' . $categoryId]);
         $output = $result['output'];
         $rResult = $result['rResult'];
 
@@ -120,5 +118,76 @@ class Setting extends AdminController
             echo json_encode(['status' => 'success']);
         else
             echo json_encode(['status' => 'success']);
+    }
+
+
+    /**
+     * @return object|string
+     */
+    public function _tabCategoriesContent()
+    {
+        $categories = $this->category_model->getAll();
+
+        $dataView = [
+            'categories' => $categories,
+        ];
+
+        return $this->load->view('setting/tabs/tabs', $dataView, true);
+    }
+
+    /**
+     * @param $categoryId
+     * @return array
+     */
+    public function _tabCategoryContent($categoryId)
+    {
+        $category = $this->category_model->getById($categoryId);
+        if ($category) {
+            $data = ['category' => $category];
+            return [
+                'title' => $this->load->view('setting/tabs/tab_title', $data, true),
+                'content' => $this->load->view('setting/tabs/tab_content', $data, true)
+            ];
+        }
+    }
+
+
+    /**
+     * @param $id
+     */
+    public function content($id = false)
+    {
+        try {
+            if ($id)
+                echo json_encode([
+                    'status' => 'success',
+                    'html' => $this->_tabCategoryContent($id)
+                ]);
+            else
+                echo json_encode([
+                    'status' => 'success',
+                    'html' => $this->_tabCategoriesContent()
+                ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e
+            ]);
+        }
+    }
+
+
+    public function categoriescontent()
+    {
+        $categories = $this->category_model->getAll();
+
+        $data = [
+            'categories' => $categories,
+        ];
+
+        echo json_encode([
+            'status' => 'success',
+            'html' => $this->load->view('setting/categories/form_categories', $data, true)
+        ]);
     }
 }

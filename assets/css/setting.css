@@ -5,3 +5,12 @@
 .form-group-button .form-control {
     margin-right: 1rem;
 }
+
+
+.loading-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 75px;
+    margin: 2rem 0;
+}

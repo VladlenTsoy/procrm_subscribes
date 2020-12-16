@@ -32,6 +32,21 @@ class Category_model extends App_Model
 
     /**
      * @param $id
+     * @return bool
+     */
+    public function getById($id)
+    {
+        $this->db->where('id', $id);
+        $result = $this->db->get(db_prefix() . 'procrm_subscribes_categories')->row_array();
+        if ($result) {
+            return $result;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $id
      * @param $data
      * @return bool
      */
@@ -52,9 +67,22 @@ class Category_model extends App_Model
     public function delete($ids)
     {
         if($ids) {
-            $this->db->where('id NOT IN (' . implode(',', $ids) . ')');
+            $this->db->where_not_in('id', $ids);
             $this->db->delete(db_prefix() . 'procrm_subscribes_categories');
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param $ids
+     * @return bool
+     */
+    public function getByNotIds($ids)
+    {
+        if($ids) {
+            $this->db->where('id NOT IN (' . implode(',', $ids) . ')');
+            return $this->db->get(db_prefix() . 'procrm_subscribes_categories')->result_array();
         }
         return false;
     }

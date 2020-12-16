@@ -14,9 +14,7 @@
                             <?php include('category_button.php') ?>
                             <?php include('create_subscribe_button.php') ?>
                         </div>
-                        <div class="tabs-container-categories">
-                            <?php include('tabs/tabs.php') ?>
-                        </div>
+                        <div class="tabs-container-categories"></div>
                     </div>
                 </div>
             </div>
@@ -36,11 +34,6 @@
             <button type="button" class="btn btn-danger btn-category-add"><i class="fa fa-trash"></i></button>
         </div>
     `
-    <?php if (isset($categories) && $categories) { ?>
-    <?php foreach ($categories as $category) { ?>
-    initDataTable('.table-category-<?php echo $category['id'] ?>', window.location.href + '/subscribes/<?php echo $category['id'] ?>');
-    <?php } ?>
-    <?php } ?>
 </script>
 <script src="<?php echo module_dir_url('procrm_subscribes', 'assets/js/setting.js?v=' . PROCRM_SUBSCRIBES_VERSIONING); ?>"></script>
 </body>

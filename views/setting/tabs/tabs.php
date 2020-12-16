@@ -1,12 +1,12 @@
 <?php if (isset($categories) && $categories) { ?>
     <div class="horizontal-tabs">
-        <ul class="nav nav-tabs profile-tabs row customer-profile-tabs nav-tabs-horizontal">
+        <ul class="nav nav-tabs profile-tabs row customer-profile-tabs nav-tabs-horizontal nav-tabs-categories">
             <?php foreach ($categories as $category) { ?>
                 <?php include('tab_title.php') ?>
             <?php } ?>
         </ul>
     </div>
-    <div class="tab-content">
+    <div class="tab-content tab-tabs-categories">
         <?php foreach ($categories as $category) { ?>
             <?php include('tab_content.php') ?>
         <?php } ?>
