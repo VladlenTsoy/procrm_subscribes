@@ -1,26 +1,55 @@
-$(function () {
-    // initDataTable('.table-test', window.location.href, [2], [2]);
+/**
+ * Удалить категорию
+ * @param e
+ */
+const deleteCategoryBlock = (e) => {
+    $(e.currentTarget).parent('.form-group').remove()
+}
 
-    $('#procrm-subscribes-create-category-button').click(function (e) {
-        e.preventDefault()
-        const title = $('#procrm_subscribes_category_title').val()
+/**
+ * Добавить категорию
+ * @param e
+ */
+const addCategoryBlock = (e) => {
+    $('.add-category-block').append(block)
+        .find('.btn-category-add')
+        .click(deleteCategoryBlock)
+}
 
-        if (title.length === 0)
-            alert(1)
+/**
+ *
+ * @param e
+ */
+const submitCategories = (e) => {
+    e.preventDefault()
+    const categories = $(e.currentTarget).serialize()
 
-        $.post(admin_url + 'procrm_subscribes/setting/category', {
-            title,
-        }).done(function (response) {
+    $.post(admin_url + 'procrm_subscribes/setting/category', categories)
+        .done(function (response) {
             response = JSON.parse(response)
-            if (response.status === 'success')
-                window.location = admin_url + 'procrm_subscribes/setting';
-            // console.log(response, )
-            // var tab = $('#theme_styling_areas').find('li.active > a:eq(0)').attr('href');
-            // tab = tab.substring(1, tab.length)
-            // window.location = admin_url+'theme_style?tab='+tab;
-        });
-    })
 
+            if(response.status === 'success') {
+                alert_float('success', response.message)
+                $('.tabs-container-categories').html(response.html)
+                $('#procrmSubscribesCategoriesModal').modal('hide')
+            }
+        });
+}
+
+$(function () {
+    // initDataTable('.table-category', window.location.href + '/subscribes/1', [2], [2]);
+    // initDataTable('.table-category', window.location.href + '/subscribes/1');
+    // initDataTable('.table-category', admin_url + 'projects/discussions/' + 1, undefined, undefined, 'undefined', [1, 'desc'])
+    // initDataTable('.table-category', admin_url + 'subscribes/1', undefined, undefined, 'undefined', [1, 'desc'])
+
+    // Удалить категорию
+    $('.btn-category-delete').click(deleteCategoryBlock)
+
+    // Добавить категорию
+    $('.btn-category-add').click(addCategoryBlock)
+
+    // Сохранить
+    $('#procrm-subscribes-categories-form').submit(submitCategories)
 
     $('#create-subscribe-form').submit(function (e) {
         e.preventDefault()
@@ -37,7 +66,7 @@ $(function () {
         //     data: data
         // }).done((response) => {
         //     response = JSON.parse(response)
-            // console.log(response)
+        // console.log(response)
         // })
         $.post(admin_url + 'procrm_subscribes/setting/subscribe', data)
             .done(function (response) {

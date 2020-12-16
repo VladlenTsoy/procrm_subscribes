@@ -15,6 +15,12 @@ define('PROCRM_SUBSCRIBES_MODULE_NAME', 'procrm_subscribes');
 // Установить кнопку в меню
 hooks()->add_action('admin_init', 'procrm_subscribes_init_menu_items');
 
+$CI = &get_instance();
+
+/**
+ * Загрузите помощник procrm subscribes
+ */
+$CI->load->helper(PROCRM_SUBSCRIBES_MODULE_NAME . '/procrm_subscribes');
 
 /**
  * Установить кнопку в меню

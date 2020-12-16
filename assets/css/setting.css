@@ -1,0 +1,7 @@
+.form-group-button {
+    display: flex;
+}
+
+.form-group-button .form-control {
+    margin-right: 1rem;
+}

@@ -29,4 +29,33 @@ class Category_model extends App_Model
 
         return false;
     }
+
+    /**
+     * @param $id
+     * @param $data
+     * @return bool
+     */
+    public function update($id, $data)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'procrm_subscribes_categories', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param $ids
+     * @return bool
+     */
+    public function delete($ids)
+    {
+        if($ids) {
+            $this->db->where('id NOT IN (' . implode(',', $ids) . ')');
+            $this->db->delete(db_prefix() . 'procrm_subscribes_categories');
+            return true;
+        }
+        return false;
+    }
 }
