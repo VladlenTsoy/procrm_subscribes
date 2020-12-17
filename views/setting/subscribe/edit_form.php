@@ -1,11 +1,12 @@
-<?php echo form_open(null, ['id' => 'create-subscribe-form']); ?>
+<?php echo form_open(null, ['id' => 'edit-subscribe-form']); ?>
+<?php form_hidden('id', $subscribe['id']) ?>
     <div class="form-group">
         <label class="control-label" for="procrm_subscribes_category_id"><?php echo _l('select_category') ?></label>
         <select class="form-control" id="procrm_subscribes_category_id" name="category_id" required>
             <?php foreach ($categories as $category) { ?>
                 <option
                         value="<?php echo $category['id'] ?>"
-                        <?php if ($category['id'] === $subscribe['category_id']) echo 'selected' ?>
+                    <?php if ($category['id'] === $subscribe['category_id']) echo 'selected' ?>
                 >
                     <?php echo $category['title'] ?>
                 </option>

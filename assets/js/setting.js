@@ -1,3 +1,39 @@
+class ProcrmSubscribesTab {
+    /**
+     * Добавление таб
+     * @param categoryIds
+     * @returns {Promise<void>}
+     */
+    addTabTitleAndContentInner = async (categoryIds) => {
+        if (categoryIds && categoryIds.length > 0) {
+            await Promise.all(
+                categoryIds.map(async categoryId => {
+                    let response = await $.get(`${admin_url}/procrm_subscribes/setting/content/${categoryId}`)
+                    response = JSON.parse(response)
+
+                    if (response.status === 'success') {
+                        $('.nav-tabs-categories').append(response.html.title)
+                        $('.tab-tabs-categories').append(response.html.content)
+                    }
+                })
+            )
+        }
+    }
+
+    /**
+     * Удаление табов
+     * @param ids
+     */
+    deleteTabs = (ids) => {
+        if (ids && ids.length > 0) {
+            ids.map(id => {
+                $(`.li_tab_title_${id}`).remove()
+                $(`#tab_category_${id}`).remove()
+            })
+        }
+    }
+}
+
 class ProcrmSubscribesCategories {
     isEditCategories = false
     $renderHtml = null
@@ -5,20 +41,27 @@ class ProcrmSubscribesCategories {
     btnCategoryDelete = null
     formCategories = null
 
+    /**
+     *
+     * @param deleteTabs - Удаление табов
+     * @param addTabTitleAndContentInner - Добавление таба
+     */
     constructor({deleteTabs, addTabTitleAndContentInner}) {
         this.deleteTabs = deleteTabs
         this.addTabTitleAndContentInner = addTabTitleAndContentInner
     }
 
     /**
-     *
+     * Изменить категории
      * @param e
      */
     submitCategories = async (e) => {
         e.preventDefault()
         const categories = $(e.currentTarget).serialize()
 
-        let response = await $.post(admin_url + 'procrm_subscribes/setting/category', categories)
+        this.isEditCategories = false
+
+        let response = await $.post(admin_url + 'procrm_subscribes/category/update', categories)
         response = JSON.parse(response)
 
         if (response.status === 'success') {
@@ -48,10 +91,15 @@ class ProcrmSubscribesCategories {
             .click(this.deleteCategoryBlock)
     }
 
-    async fetchHtml() {
-        let response = await $.get(admin_url + 'procrm_subscribes/setting/categoriescontent')
-
+    /**
+     * Запрос и вывод формы
+     * @returns {Promise<void>}
+     */
+    async fetchFormView() {
+        this.isEditCategories = true
+        let response = await $.get(admin_url + 'procrm_subscribes/category/formModalView')
         response = JSON.parse(response)
+
         if (response.status === 'success') {
             this.$renderHtml = $('.modal-body-categories').html(response.html)
 
@@ -63,166 +111,148 @@ class ProcrmSubscribesCategories {
         }
     }
 
+    /**
+     * Открыть категории модал
+     */
+    openModal = () => {
+        $('#procrmSubscribesCategoriesModal').modal('show')
+        if (!this.isEditCategories)
+            this.fetchFormView().then()
+    }
+
+    /**
+     * События
+     */
     events() {
         this.btnCategoryDelete.click(this.deleteCategoryBlock)
         this.btnCategoryAdd.click(this.addCategoryBlock)
         this.formCategories.submit(this.submitCategories)
     }
 
-    render = () => {
-        $('#procrmSubscribesCategoriesModal').modal('show')
-        this.fetchHtml().then()
+    render() {
+        $('#btn-categories-modal').click(this.openModal)
     }
 }
 
 
-class ProcrmSubscribesSubscribe {
-    $el = null
-    $createForm = null
-
-    constructor({updateDataTable}) {
-        this.$el = $('.btn-create-subscribe-block')
-        this.updateDataTable = updateDataTable
+class ProcrmSubscribeTable {
+    constructor() {
+        this.$el = $('.tabs-container-categories')
+        // this.$el = $('.btn-create-subscribe-block')
     }
 
+    /**
+     * Обновление таблицы (DataTables)
+     * @param categoryId
+     */
+    updateDataTable = (categoryId) => {
+        $(`.table-category-${categoryId}`).DataTable().ajax.reload()
+    }
+
+    /**
+     * Создание таблицы (DataTables)
+     * @param categoryId
+     */
+    createDataTable = (categoryId) => {
+        initDataTable(`.table-category-${categoryId}`, admin_url + `procrm_subscribes/subscribe/table/${categoryId}`, ['undefined'], ['undefined'], undefined, [0, 'desc']);
+    }
+
+    /**
+     * Удаление абонемента
+     * @param e
+     * @returns {Promise<void>}
+     */
+    deleteSubscribe = async (e) => {
+        const result = confirm_delete()
+        if (!result) return result;
+        const subscribeId = e.currentTarget.dataset.subscribeId
+        const categoryId = e.currentTarget.dataset.categoryId
+        let response = await $.get(admin_url + 'procrm_subscribes/subscribe/delete/' + subscribeId)
+        response = JSON.parse(response)
+
+        if (response.status === 'success') {
+            this.updateDataTable(categoryId)
+            alert_float('success', response.message)
+        } else
+            alert_float('error', response.message)
+    }
+
+    /**
+     * Создать абонемент
+     * @param e
+     * @returns {Promise<void>}
+     */
     createSubscribe = async (e) => {
         e.preventDefault()
         const data = $('#create-subscribe-form').serialize()
+        let response = await $.post(admin_url + 'procrm_subscribes/subscribe/create', data)
+        response = JSON.parse(response)
+        if (response.status === 'success') {
+            this.updateDataTable(response.category_id)
+            $('#editorSubscribeModal').modal('hide')
+        }
+    }
 
-        $.post(admin_url + 'procrm_subscribes/setting/subscribe', data)
+    fetchTabsContent = () => {
+        $.get(admin_url + 'procrm_subscribes/setting/content')
             .done((response) => {
                 response = JSON.parse(response)
                 if (response.status === 'success') {
-                    this.updateDataTable(response.category_id)
-                    $('#editorSubscribeModal').modal('hide')
+                    this.$el.html(response.html)
+                        .find('.table-category')
+                        .map((key, e) => this.createDataTable(e.dataset.categoryId))
                 }
             })
     }
 
     fetchOpenModalContent = async () => {
         $('#editorSubscribeModal').modal('show')
-        let response = await $.get(admin_url + 'procrm_subscribes/setting/subsctribeformcontent')
+        let response = await $.get(admin_url + 'procrm_subscribes/subscribe/formModalView')
         response = JSON.parse(response)
         if (response.status === 'success') {
             //
-            this.$el.find('.modal-body-subscribe').html(response.html)
+            $(document).find('.modal-body-subscribe').html(response.html)
             //
-            this.$el.find('#create-subscribe-form').submit(this.createSubscribe)
+            $(document).find('#create-subscribe-form').submit(this.createSubscribe)
         }
-    }
-
-    openEditModal = async (subscribeId) => {
-        $('#editorSubscribeModal').modal('show')
-        let response = await $.get(admin_url + 'procrm_subscribes/setting/subsctribeformcontent/' + subscribeId)
-        response = JSON.parse(response)
-        if (response.status === 'success') {
-            //
-            this.$el.find('.modal-body-subscribe').html(response.html)
-            //
-            this.$el.find('#create-subscribe-form').submit(this.createSubscribe)
-        }
-    }
-
-    async fetchBtnModalContent() {
-        let response = await $.get(admin_url + 'procrm_subscribes/setting/subsctribebtncontent')
-        response = JSON.parse(response)
-        if (response.status === 'success')
-            this.$el.html(response.html)
-
-        this.$el.find('#btn-subscribe-modal').click(this.fetchOpenModalContent)
-    }
-
-    async render() {
-        await this.fetchBtnModalContent()
-    }
-}
-
-
-class ProcrmSubscribeTable {
-    addTabTitleAndContentInner = async (categoryIds) => {
-        if (categoryIds && categoryIds.length > 0) {
-            await Promise.all(
-                categoryIds.map(async categoryId => {
-                    let response = await $.get(`${admin_url}/procrm_subscribes/setting/content/${categoryId}`)
-                    response = JSON.parse(response)
-
-                    if (response.status === 'success') {
-                        $('.nav-tabs-categories').append(response.html.title)
-                        $('.tab-tabs-categories').append(response.html.content)
-                    }
-                })
-            )
-        }
-    }
-
-    updateDataTable = (categoryId) => {
-        $(`.table-category-${categoryId}`).DataTable().ajax.reload()
     }
 
     openEditModal = (e) => {
         const subscribeId = e.currentTarget.dataset.subscribeId
-        this.openEditSubscribeModal(subscribeId)
-    }
-
-    openDeleteModal = async (e) => {
-        const subscribeId = e.currentTarget.dataset.subscribeId
-        const result = confirm('Удалить?')
-        if (result) {
-            let response = await $.get(admin_url + 'procrm_subscribes/setting/subscribe/delete/' + subscribeId)
-            console.log(response)
-        }
-    }
-
-    tabsContentInner = async () => {
-        let response = await $.get(admin_url + 'procrm_subscribes/setting/content')
-        response = JSON.parse(response)
-        if (response.status === 'success')
-            $('.tabs-container-categories').html(response.html)
-
-        $('.table-category').map(function () {
-            const categoryId = this.dataset.categoryId
-            initDataTable(`.table-category-${categoryId}`, admin_url + `procrm_subscribes/setting/subscribes/${categoryId}`, ['undefined'], ['undefined'], undefined, [0, 'desc']);
-        })
-
-        let i = 0
-        await new Promise(resolve => {
-            $(`.table-category`).DataTable().on('draw', (e) => {
-                if ($(`.table-category`).length <= ++i)
-                    resolve()
+        $('#editorSubscribeModal').modal('show')
+        $.get(admin_url + 'procrm_subscribes/subscribe/formModalView/' + subscribeId)
+            .done(response => {
+                response = JSON.parse(response)
+                if (response.status === 'success') {
+                    this.$el.find('.modal-body-subscribe').html(response.html)
+                    this.$el.find('#create-subscribe-form').submit(this.createSubscribe)
+                }
             })
-        })
-        $('.edit-column').click(this.openEditModal)
-        $('.delete-column').click(this.openDeleteModal)
     }
 
-    deleteTabs = (ids) => {
-        if (ids && ids.length > 0) {
-            ids.map(id => {
-                $(`.li_tab_title_${id}`).remove()
-                $(`#tab_category_${id}`).remove()
-            })
-        }
+    /**
+     * События
+     */
+    events() {
+        $(document).on('click', '#btn-subscribe-modal', this.fetchOpenModalContent);
+        this.$el.on('click', '.edit-column', this.openEditModal);
+        this.$el.on('click', '.delete-column', this.deleteSubscribe);
     }
 
-    async render({openEditSubscribeModal}) {
-        this.openEditSubscribeModal = openEditSubscribeModal
-        await this.tabsContentInner()
+    render() {
+        this.fetchTabsContent()
+        this.events()
     }
 }
 
 $(function () {
-    const subscribeTableClass = new ProcrmSubscribeTable()
-
-    const subscribeClass = new ProcrmSubscribesSubscribe({updateDataTable: subscribeTableClass.updateDataTable})
-    subscribeClass.render().then()
-
+    const tabClass = new ProcrmSubscribesTab()
+    const tableClass = new ProcrmSubscribeTable()
     const categoriesClass = new ProcrmSubscribesCategories({
-        addTabTitleAndContentInner: subscribeTableClass.addTabTitleAndContentInner,
-        deleteTabs: subscribeTableClass.deleteTabs
+        addTabTitleAndContentInner: tabClass.addTabTitleAndContentInner,
+        deleteTabs: tabClass.deleteTabs
     })
 
-    subscribeTableClass.render({openEditSubscribeModal: subscribeClass.openEditModal}).then()
-
-    $('#btn-categories-modal').click(categoriesClass.render)
-
+    tableClass.render()
+    categoriesClass.render()
 });

@@ -27,3 +27,5 @@ $lang['months']                                             = 'месяца';
 $lang['_months']                                            = 'месяцев';
 $lang['enter_cost']                                         = 'Введите стоимость';
 $lang['enter_number_frosts']                                = 'Введите кол-во заморозок';
+$lang['you_have_successfully_deleted_your_subscription']    = 'Вы успешно удалили абонемент!';
+$lang['unknown_error']                                      = 'Неизвестная ошибка!';

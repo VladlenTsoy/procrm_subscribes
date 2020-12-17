@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Subscribe_model extends App_Model
 {
     /**
-     *
+     * Создание
      * @param $data
      * @return boolean
      */
@@ -18,6 +18,24 @@ class Subscribe_model extends App_Model
     }
 
     /**
+     * Обновление по id
+     * @param $id
+     * @param $data
+     * @return bool
+     */
+    public function updateById($id, $data)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'procrm_subscribes', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Вывод по категории
+     * @param $categoryId
      * @return bool
      */
     public function getGetCategoryId($categoryId)
@@ -32,6 +50,8 @@ class Subscribe_model extends App_Model
     }
 
     /**
+     * Вывод по Id
+     * @param $id
      * @return bool
      */
     public function getById($id)
@@ -46,15 +66,17 @@ class Subscribe_model extends App_Model
     }
 
     /**
+     * Удаление по Id
+     * @param $id
      * @return bool
      */
-    public function getAll()
+    public function deleteById($id)
     {
-        $result = $this->db->get(db_prefix() . 'procrm_subscribes')->result_array();
-        if ($result) {
-            return $result;
+        if ($id) {
+            $this->db->where('id', $id);
+            $this->db->delete(db_prefix() . 'procrm_subscribes');
+            return true;
         }
-
         return false;
     }
 }
