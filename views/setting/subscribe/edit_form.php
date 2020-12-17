@@ -1,5 +1,12 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title"> <?php echo _l('edit_subscribe') ?> </h4>
+</div>
+<div class="modal-body modal-body-subscribe">
 <?php echo form_open(null, ['id' => 'edit-subscribe-form']); ?>
-<?php form_hidden('id', $subscribe['id']) ?>
+<?php echo form_hidden('id', $subscribe['id']) ?>
     <div class="form-group">
         <label class="control-label" for="procrm_subscribes_category_id"><?php echo _l('select_category') ?></label>
         <select class="form-control" id="procrm_subscribes_category_id" name="category_id" required>
@@ -31,14 +38,14 @@
                 <div class="time-label text-muted"><?php echo _l('start') ?></div>
                 <div class="time-control">
                     <input class="form-control" id="procrm_subscribes_time" type="number"
-                           min="00" max="24" name="time[from][hour]" required
+                           min="00" max="24" name="time[from][hour]" required maxlength="2"
                            value="<?php echo $subscribe['time']['from']['hour'] ?>"
                     />
                 </div>
                 <div class="time-control">
                     <input class="form-control" type="number"
                            value="<?php echo $subscribe['time']['from']['minute'] ?>"
-                           min="00" max="60" name="time[from][minute]" required/>
+                           min="00" max="60" name="time[from][minute]" required maxlength="2"/>
                 </div>
             </div>
             <div class="time-to">
@@ -46,12 +53,12 @@
                 <div class="time-control">
                     <input class="form-control" type="number"
                            value="<?php echo $subscribe['time']['to']['hour'] ?>"
-                           min="00" max="24" name="time[to][hour]" required/>
+                           min="00" max="24" name="time[to][hour]" required maxlength="2"/>
                 </div>
                 <div class="time-control">
                     <input class="form-control" type="number"
                            value="<?php echo $subscribe['time']['to']['minute'] ?>"
-                           min="00" max="60" name="time[to][minute]" required/>
+                           min="00" max="60" name="time[to][minute]" required maxlength="2"/>
                 </div>
             </div>
         </div>
@@ -103,3 +110,10 @@
         />
     </div>
 <?php echo form_close(); ?>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo _l('close') ?></button>
+    <button type="submit" class="btn btn-primary" form="edit-subscribe-form">
+        <?php echo _l('save') ?>
+    </button>
+</div>

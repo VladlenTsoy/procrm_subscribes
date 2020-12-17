@@ -11,14 +11,12 @@ class Setting extends AdminController
 
     public function index()
     {
-        $data = [
-            'title' => _l('settings'),
-        ];
-
+        $data = ['title' => _l('settings')];
         $this->load->view('setting/index', $data);
     }
 
     /**
+     *
      * @param $categoryId
      */
     public function content($categoryId = false)

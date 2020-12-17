@@ -1,3 +1,10 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title"> <?php echo _l('create_subscribe') ?> </h4>
+</div>
+<div class="modal-body modal-body-subscribe">
 <?php echo form_open(null, ['id' => 'create-subscribe-form']); ?>
     <div class="form-group">
         <label class="control-label" for="procrm_subscribes_category_id"><?php echo _l('select_category') ?></label>
@@ -18,22 +25,22 @@
                 <div class="time-label text-muted"><?php echo _l('start') ?></div>
                 <div class="time-control">
                     <input class="form-control" id="procrm_subscribes_time" type="number" value="00"
-                           min="00" max="24" name="time[from][hour]" required/>
+                           min="00" max="24" name="time[from][hour]" required maxlength="2"/>
                 </div>
                 <div class="time-control">
                     <input class="form-control" type="number" value="00"
-                           min="00" max="60" name="time[from][minute]" required/>
+                           min="00" max="60" name="time[from][minute]" required maxlength="2"/>
                 </div>
             </div>
             <div class="time-to">
                 <div class="time-label text-muted"><?php echo _l('end') ?></div>
                 <div class="time-control">
                     <input class="form-control" type="number" value="00"
-                           min="00" max="24" name="time[to][hour]" required/>
+                           min="00" max="24" name="time[to][hour]" required maxlength="2"/>
                 </div>
                 <div class="time-control">
                     <input class="form-control" type="number" value="00"
-                           min="00" max="60" name="time[to][minute]" required/>
+                           min="00" max="60" name="time[to][minute]" required maxlength="2"/>
                 </div>
             </div>
         </div>
@@ -60,3 +67,11 @@
         <input class="form-control" id="procrm_subscribes_frost_days" type="number" name="frost_days"/>
     </div>
 <?php echo form_close(); ?>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo _l('close') ?></button>
+    <button type="submit" class="btn btn-primary" form="create-subscribe-form">
+        <?php echo _l('save') ?>
+    </button>
+</div>
+

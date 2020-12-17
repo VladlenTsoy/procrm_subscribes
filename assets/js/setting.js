@@ -167,14 +167,30 @@ class ProcrmSubscribeTable {
         if (!result) return result;
         const subscribeId = e.currentTarget.dataset.subscribeId
         const categoryId = e.currentTarget.dataset.categoryId
-        let response = await $.get(admin_url + 'procrm_subscribes/subscribe/delete/' + subscribeId)
-        response = JSON.parse(response)
+        $.get(admin_url + 'procrm_subscribes/subscribe/delete/' + subscribeId)
+            .done(response => {
+                response = JSON.parse(response)
 
-        if (response.status === 'success') {
-            this.updateDataTable(categoryId)
-            alert_float('success', response.message)
-        } else
-            alert_float('error', response.message)
+                if (response.status === 'success') {
+                    this.updateDataTable(categoryId)
+                    alert_float('success', response.message)
+                } else
+                    alert_float('error', response.message)
+            })
+    }
+
+    editSubscribe = (e) => {
+        e.preventDefault()
+        const data = $('#edit-subscribe-form').serialize()
+        $.post(admin_url + 'procrm_subscribes/subscribe/update', data)
+            .done((response) => {
+                response = JSON.parse(response)
+                if (response.status === 'success') {
+                    this.updateDataTable(response.category_id)
+                    alert_float('success', response.message)
+                    $('#editorSubscribeModal').modal('hide')
+                }
+            })
     }
 
     /**
@@ -185,15 +201,50 @@ class ProcrmSubscribeTable {
     createSubscribe = async (e) => {
         e.preventDefault()
         const data = $('#create-subscribe-form').serialize()
-        let response = await $.post(admin_url + 'procrm_subscribes/subscribe/create', data)
-        response = JSON.parse(response)
-        if (response.status === 'success') {
-            this.updateDataTable(response.category_id)
-            $('#editorSubscribeModal').modal('hide')
-        }
+        $.post(admin_url + 'procrm_subscribes/subscribe/create', data)
+            .done((response) => {
+                response = JSON.parse(response)
+                if (response.status === 'success') {
+                    this.updateDataTable(response.category_id)
+                    alert_float('success', response.message)
+                    $('#editorSubscribeModal').modal('hide')
+                }
+            })
     }
 
-    fetchTabsContent = () => {
+    /**
+     * Открыть создание
+     */
+    openCreateModal = () => {
+        $('#editorSubscribeModal').modal('show')
+        $.get(admin_url + 'procrm_subscribes/subscribe/formModalView')
+            .done(response => {
+                response = JSON.parse(response)
+                if (response.status === 'success') {
+                    $(document).find('.modal-subscribe-data').html(response.html)
+                }
+            })
+    }
+
+    /**
+     * Открыть редактирование
+     * @param e
+     */
+    openEditModal = (e) => {
+        const subscribeId = e.currentTarget.dataset.subscribeId
+        $('#editorSubscribeModal').modal('show')
+        $.get(admin_url + 'procrm_subscribes/subscribe/formModalView/' + subscribeId)
+            .done(response => {
+                response = JSON.parse(response)
+                if (response.status === 'success')
+                    $(document).find('.modal-subscribe-data').html(response.html)
+            })
+    }
+
+    /**
+     * Вывод всех
+     */
+    fetchTabs = () => {
         $.get(admin_url + 'procrm_subscribes/setting/content')
             .done((response) => {
                 response = JSON.parse(response)
@@ -205,42 +256,19 @@ class ProcrmSubscribeTable {
             })
     }
 
-    fetchOpenModalContent = async () => {
-        $('#editorSubscribeModal').modal('show')
-        let response = await $.get(admin_url + 'procrm_subscribes/subscribe/formModalView')
-        response = JSON.parse(response)
-        if (response.status === 'success') {
-            //
-            $(document).find('.modal-body-subscribe').html(response.html)
-            //
-            $(document).find('#create-subscribe-form').submit(this.createSubscribe)
-        }
-    }
-
-    openEditModal = (e) => {
-        const subscribeId = e.currentTarget.dataset.subscribeId
-        $('#editorSubscribeModal').modal('show')
-        $.get(admin_url + 'procrm_subscribes/subscribe/formModalView/' + subscribeId)
-            .done(response => {
-                response = JSON.parse(response)
-                if (response.status === 'success') {
-                    this.$el.find('.modal-body-subscribe').html(response.html)
-                    this.$el.find('#create-subscribe-form').submit(this.createSubscribe)
-                }
-            })
-    }
-
     /**
      * События
      */
     events() {
-        $(document).on('click', '#btn-subscribe-modal', this.fetchOpenModalContent);
+        $(document).on('submit', '#create-subscribe-form', this.createSubscribe)
+        $(document).on('submit', '#edit-subscribe-form', this.editSubscribe)
+        $(document).on('click', '#btn-subscribe-modal', this.openCreateModal);
         this.$el.on('click', '.edit-column', this.openEditModal);
         this.$el.on('click', '.delete-column', this.deleteSubscribe);
     }
 
     render() {
-        this.fetchTabsContent()
+        this.fetchTabs()
         this.events()
     }
 }

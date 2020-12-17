@@ -20,7 +20,11 @@ class Subscribe extends AdminController
         $subscribeId = $this->subscribe_model->create($data);
 
         if ($subscribeId)
-            echo json_encode(['status' => 'success', 'category_id' => $data['category_id']]);
+            echo json_encode([
+                'status' => 'success',
+                'category_id' => $data['category_id'],
+                'message' => _l('you_have_successfully_created_your_subscription')
+            ]);
         else
             echo json_encode(['status' => 'error']);
     }
@@ -28,17 +32,20 @@ class Subscribe extends AdminController
 
     /**
      * Обновить абонемент
-     * @param $id
      */
-    public function edit($id)
+    public function update()
     {
         $data = $this->input->post();
 
         $data['time'] = json_encode($data['time']);
-        $result = $this->subscribe_model->updateById($id);
+        $result = $this->subscribe_model->updateById($data['id'], $data);
 
         if ($result)
-            echo json_encode(['status' => 'success']);
+            echo json_encode([
+                'status' => 'success',
+                'message' => _l('you_have_successfully_edit_your_subscription'),
+                'category_id' => $data['category_id']
+            ]);
         else
             echo json_encode(['status' => 'error']);
     }
@@ -52,7 +59,10 @@ class Subscribe extends AdminController
         $result = $this->subscribe_model->deleteById($id);
 
         if ($result)
-            echo json_encode(['status' => 'success', 'message' => _l('you_have_successfully_deleted_your_subscription')]);
+            echo json_encode([
+                'status' => 'success',
+                'message' => _l('you_have_successfully_deleted_your_subscription')
+            ]);
         else
             echo json_encode(['status' => 'error', 'message' => _l('unknown_error')]);
     }
@@ -62,7 +72,7 @@ class Subscribe extends AdminController
      * Вывод формы
      * @param bool $subscribeId
      */
-    public function formModalView ($subscribeId = false)
+    public function formModalView($subscribeId = false)
     {
         $categories = $this->category_model->getAll();
 
