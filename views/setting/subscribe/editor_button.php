@@ -1,5 +1,5 @@
 <?php if (isset($categories) && $categories) { ?>
-    <button class="btn btn-primary" data-toggle="modal" data-target="#editorSubscribeModal">
+    <button class="btn btn-primary" id="btn-subscribe-modal">
         <i class="fa fa-plus"></i> <?php echo $title ?>
     </button>
 
@@ -14,8 +14,10 @@
                     </button>
                     <h4 class="modal-title"> <?php echo $title ?> </h4>
                 </div>
-                <div class="modal-body">
-
+                <div class="modal-body modal-body-subscribe">
+                    <div class="loading-block">
+                        <i class="fa fa-spin fa-refresh"></i>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo _l('close') ?></button>

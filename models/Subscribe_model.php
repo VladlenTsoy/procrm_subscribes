@@ -34,6 +34,20 @@ class Subscribe_model extends App_Model
     /**
      * @return bool
      */
+    public function getById($id)
+    {
+        $this->db->where('id', $id);
+        $result = $this->db->get(db_prefix() . 'procrm_subscribes')->row_array();
+        if ($result) {
+            return $result;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public function getAll()
     {
         $result = $this->db->get(db_prefix() . 'procrm_subscribes')->result_array();

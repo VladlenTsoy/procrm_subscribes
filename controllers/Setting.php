@@ -85,8 +85,8 @@ class Setting extends AdminController
                 if ($i === 1) {
                     $_title = $aRow[$aColumns[$i]];
                     $_title .= '<div class="row-options">';
-                    $_title .= '<a class="pointer">' . _l('edit') . '</a>';
-                    $_title .= ' | <a class="pointer text-danger">' . _l('delete') . '</a>';
+                    $_title .= '<a class="pointer edit-column" data-subscribe-id="' . $aRow['id'] . '">' . _l('edit') . '</a>';
+                    $_title .= ' | <a class="pointer text-danger delete-column" data-subscribe-id="' . $aRow['id'] . '">' . _l('delete') . '</a>';
                     $_title .= '</div>';
                     $row[] = $_title;
                 } elseif ($i === 2) {
@@ -117,7 +117,7 @@ class Setting extends AdminController
         $subscribeId = $this->subscribe_model->create($data);
 
         if ($subscribeId)
-            echo json_encode(['status' => 'success']);
+            echo json_encode(['status' => 'success', 'category_id' => $data['category_id']]);
         else
             echo json_encode(['status' => 'success']);
     }
@@ -191,5 +191,54 @@ class Setting extends AdminController
             'status' => 'success',
             'html' => $this->load->view('setting/categories/form', $data, true)
         ]);
+    }
+
+    public function subsctribebtncontent()
+    {
+        $categories = $this->category_model->getAll();
+
+        $data = [
+            'title' => _l('create_subscribe'),
+            'categories' => $categories,
+        ];
+
+        echo json_encode([
+            'status' => 'success',
+            'html' => $this->load->view('setting/subscribe/editor_button', $data, true)
+        ]);
+    }
+
+    public function subsctribeformcontent($subscribeId = false)
+    {
+        $categories = $this->category_model->getAll();
+
+        if ($subscribeId) {
+            $subscribe = $this->subscribe_model->getById($subscribeId);
+
+            if ($subscribe) {
+                $subscribe['time'] = json_decode($subscribe['time'], true);
+                $data = [
+                    'subscribe' => $subscribe,
+                    'categories' => $categories,
+                ];
+
+                echo json_encode([
+                    'status' => 'success',
+                    'html' => $this->load->view('setting/subscribe/edit_form', $data, true)
+                ]);
+            } else
+                echo json_encode([
+                    'status' => 'error',
+                ]);
+        } else {
+            $data = [
+                'categories' => $categories,
+            ];
+
+            echo json_encode([
+                'status' => 'success',
+                'html' => $this->load->view('setting/subscribe/form', $data, true)
+            ]);
+        }
     }
 }

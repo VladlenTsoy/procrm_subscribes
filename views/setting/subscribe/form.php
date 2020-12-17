@@ -12,7 +12,7 @@
         <input class="form-control" id="procrm_subscribes_title" type="text" name="title" required/>
     </div>
     <div class="form-group">
-        <label class="control-label" for="procrm_subscribes_time"><?php echo _l('enter_title') ?></label>
+        <label class="control-label" for="procrm_subscribes_time"><?php echo _l('enter_time') ?></label>
         <div class="time-container">
             <div class="time-from">
                 <div class="time-label text-muted"><?php echo _l('start') ?></div>

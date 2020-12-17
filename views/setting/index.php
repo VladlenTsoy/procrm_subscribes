@@ -12,9 +12,7 @@
                         <hr class="hr-panel-heading"/>
                         <div style="margin-bottom: 3.5rem">
                             <?php include('category_button.php') ?>
-                            <div class="">
-
-                            </div>
+                            <div class="btn-create-subscribe-block"></div>
                         </div>
                         <div class="tabs-container-categories"></div>
                     </div>

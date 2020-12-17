@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Category_model extends App_Model
 {
     /**
-     * .
+     * Создать категорию
      * @param $data
      * @return boolean
      */
@@ -18,6 +18,7 @@ class Category_model extends App_Model
     }
 
     /**
+     * Вывод всех категорий
      * @return bool
      */
     public function getAll()
@@ -31,6 +32,7 @@ class Category_model extends App_Model
     }
 
     /**
+     * Вывод по Id
      * @param $id
      * @return bool
      */
@@ -46,6 +48,7 @@ class Category_model extends App_Model
     }
 
     /**
+     * Обновление по Id
      * @param $id
      * @param $data
      * @return bool
@@ -61,6 +64,7 @@ class Category_model extends App_Model
     }
 
     /**
+     * Удалить категории по ids
      * @param $ids
      * @return bool
      */
@@ -75,6 +79,7 @@ class Category_model extends App_Model
     }
 
     /**
+     * Вывод всех кроме ids
      * @param $ids
      * @return bool
      */
