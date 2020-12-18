@@ -35,3 +35,4 @@ $lang['loading']                                            = 'Загрузка'
 $lang['empty']                                              = 'Пусто';
 $lang['permission_setting']                                 = 'Настройки';
 $lang['permission_active']                                  = 'Активные';
+$lang['active_subscribes']                                  = 'Активные абонементы';

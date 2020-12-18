@@ -3,6 +3,9 @@
 class Active extends AdminController
 {
     public function index () {
-        $this->load->view('active/index');
+        $data = [
+            'title' => _l('active_subscribes')
+        ];
+        $this->load->view('active/index', $data);
     }
 }
