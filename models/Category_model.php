@@ -68,10 +68,25 @@ class Category_model extends App_Model
      * @param $ids
      * @return bool
      */
-    public function delete($ids)
+    public function deleteWhereNot($ids)
     {
-        if($ids) {
+        if (isset($ids) && count($ids) > 0) {
             $this->db->where_not_in('id', $ids);
+            $this->db->delete(db_prefix() . 'procrm_subscribes_categories');
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Удалить
+     * @param $ids
+     * @return bool
+     */
+    public function deleteWhereIn($ids)
+    {
+        if (isset($ids) && count($ids) > 0) {
+            $this->db->where_in('id', $ids);
             $this->db->delete(db_prefix() . 'procrm_subscribes_categories');
             return true;
         }
@@ -85,8 +100,9 @@ class Category_model extends App_Model
      */
     public function getByNotIds($ids)
     {
-        if($ids) {
-            $this->db->where('id NOT IN (' . implode(',', $ids) . ')');
+        if (isset($ids)) {
+            if (count($ids) > 0)
+                $this->db->where('id NOT IN (' . implode(',', $ids) . ')');
             return $this->db->get(db_prefix() . 'procrm_subscribes_categories')->result_array();
         }
         return false;

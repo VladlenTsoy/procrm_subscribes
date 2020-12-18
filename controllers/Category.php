@@ -30,9 +30,13 @@ class Category extends AdminController
                 $keys = array_keys($categories);
                 if (count($keys)) {
                     $oldCategories = $this->category_model->getByNotIds($keys);
-                    $deleteIds = $arr = array_column($oldCategories, 'id');
-                    $this->category_model->delete($keys);
+                    $deleteIds = array_column($oldCategories, 'id');
+                    $this->category_model->deleteWhereNot($keys);
                 }
+            } else {
+                $oldCategories = $this->category_model->getByNotIds([]);
+                $deleteIds = array_column($oldCategories, 'id');
+                $this->category_model->deleteWhereIn($deleteIds);
             }
 
             if ($createCategories)

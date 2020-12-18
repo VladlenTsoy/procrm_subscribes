@@ -32,3 +32,4 @@ $lang['you_have_successfully_deleted_your_subscription']    = 'Вы успешн
 $lang['you_have_successfully_edit_your_subscription']       = 'Вы успешно изменили абонемент!';
 $lang['unknown_error']                                      = 'Неизвестная ошибка!';
 $lang['loading']                                            = 'Загрузка';
+$lang['empty']                                              = 'Пусто';

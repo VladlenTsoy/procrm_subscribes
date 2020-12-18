@@ -37,3 +37,20 @@
 .time-container .time-control {
     margin-right: 0.5rem;
 }
+
+.empty{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 2rem 0;
+    color: #e3e8ee;
+}
+
+.empty i{
+    font-size: 100px;
+}
+
+.empty p{
+    font-size: 20px;
+}

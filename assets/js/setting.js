@@ -1,4 +1,14 @@
-class ProcrmSubscribesTab {
+class ProcrmSubscribesCategories {
+    isEditCategories = false
+    $renderHtml = null
+    btnCategoryAdd = null
+    btnCategoryDelete = null
+    formCategories = null
+
+    constructor({createDataTable}) {
+        this.createDataTable = createDataTable
+    }
+
     /**
      * Добавление таб
      * @param categoryIds
@@ -14,6 +24,7 @@ class ProcrmSubscribesTab {
                     if (response.status === 'success') {
                         $('.nav-tabs-categories').append(response.html.title)
                         $('.tab-tabs-categories').append(response.html.content)
+                        this.createDataTable(categoryId)
                     }
                 })
             )
@@ -31,24 +42,6 @@ class ProcrmSubscribesTab {
                 $(`#tab_category_${id}`).remove()
             })
         }
-    }
-}
-
-class ProcrmSubscribesCategories {
-    isEditCategories = false
-    $renderHtml = null
-    btnCategoryAdd = null
-    btnCategoryDelete = null
-    formCategories = null
-
-    /**
-     *
-     * @param deleteTabs - Удаление табов
-     * @param addTabTitleAndContentInner - Добавление таба
-     */
-    constructor({deleteTabs, addTabTitleAndContentInner}) {
-        this.deleteTabs = deleteTabs
-        this.addTabTitleAndContentInner = addTabTitleAndContentInner
     }
 
     /**
@@ -274,12 +267,8 @@ class ProcrmSubscribeTable {
 }
 
 $(function () {
-    const tabClass = new ProcrmSubscribesTab()
     const tableClass = new ProcrmSubscribeTable()
-    const categoriesClass = new ProcrmSubscribesCategories({
-        addTabTitleAndContentInner: tabClass.addTabTitleAndContentInner,
-        deleteTabs: tabClass.deleteTabs
-    })
+    const categoriesClass = new ProcrmSubscribesCategories({createDataTable: tableClass.createDataTable})
 
     tableClass.render()
     categoriesClass.render()
