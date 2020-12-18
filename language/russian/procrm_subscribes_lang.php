@@ -33,3 +33,5 @@ $lang['you_have_successfully_edit_your_subscription']       = 'Вы успешн
 $lang['unknown_error']                                      = 'Неизвестная ошибка!';
 $lang['loading']                                            = 'Загрузка';
 $lang['empty']                                              = 'Пусто';
+$lang['permission_setting']                                 = 'Настройки';
+$lang['permission_active']                                  = 'Активные';
