@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-define('PROCRM_SUBSCRIBES_VERSIONING', '2.6.1');
+define('PROCRM_SUBSCRIBES_VERSIONING', '2.6.2');
 
 
 /**
