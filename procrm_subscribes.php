@@ -10,7 +10,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
     Requires at least: 2.3.*
 */
 
+// Название модуля
 define('PROCRM_SUBSCRIBES_MODULE_NAME', 'procrm_subscribes');
+// Версия модуля
+define('PROCRM_SUBSCRIBES_VERSIONING', '2.6.2');
 
 // Установить кнопку в меню
 hooks()->add_action('admin_init', 'procrm_subscribes_init_menu_items');
@@ -68,7 +71,6 @@ function procrm_subscribes_init_menu_items()
  */
 function procrm_subscribes_init_permissions($data)
 {
-
     $data[PROCRM_SUBSCRIBES_MODULE_NAME] = [
         'name' => _l('procrm_subscribes'),
         'capabilities' => [
@@ -87,7 +89,6 @@ register_activation_hook(PROCRM_SUBSCRIBES_MODULE_NAME, 'procrm_subscribes_modul
 
 function procrm_subscribes_module_activation_hook()
 {
-    $CI = &get_instance();
     require_once(__DIR__ . '/install.php');
 }
 

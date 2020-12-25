@@ -1,18 +1,17 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-define('PROCRM_SUBSCRIBES_VERSIONING', '2.6.2');
-
 
 /**
+ * Вывод месяцев
  * @param $mount
  * @return string
  */
 function procrm_subscribes_mount($mount)
 {
     if ($mount >= 2 && $mount <= 4)
-        return $mount . ' месяца';
+        return $mount . ' ' . _l('months');
     elseif ($mount >= 5)
-        return $mount . ' месяцев';
+        return $mount . ' ' . _l('_months');
 
-    return $mount . ' месяц';
+    return $mount . ' ' . _l('month');
 }
