@@ -51,6 +51,8 @@ class Setting extends AdminController
                     $time = json_decode($aRow[$aColumns[$i]], true);
                     $_time = $time['from']['hour'] . ':' . $time['from']['minute'] . ' - ' . $time['to']['hour'] . ':' . $time['to']['minute'];
                     $row[] = $_time;
+                } elseif ($i === 4) {
+                    $row[] = procrm_subscribes_mount($aRow[$aColumns[$i]]);
                 } elseif ($i === 5) {
                     $_price = number_format($aRow[$aColumns[$i]], 0, ' ', ' ');
                     $row[] = $_price;
