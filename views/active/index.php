@@ -10,17 +10,20 @@
                     <div class="panel-body">
                         <h3 class="no-margin"><?php echo _l('active_subscribes') ?></h3>
                         <hr class="hr-panel-heading"/>
-                        <button class="btn btn-primary"><i class="fa fa-plus"></i> Добавить к лиду</button>
+                        <?php include('create_active/button.php') ?>
+                        <?php include('edit_active/button.php') ?>
                         <hr class="hr-panel-heading"/>
                         <?php echo render_datatable([
                             '#',
-                            _l('title'),
-                            _l('time'),
-                            _l('duration'),
-                            _l('price'),
-                            _l('frost_days')
+                            _l('Абонемент'),
+                            _l('Лид'),
+                            _l('Статус'),
+                            _l('Осталось'),
+                            _l('Замороженных'),
+                            _l('Создан'),
+                            '',
                         ],
-                            'subscribes'
+                            'active_subscribes'
                         ) ?>
                     </div>
                 </div>

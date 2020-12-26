@@ -3,6 +3,7 @@
 # Version 2.3.0
 
 $lang['procrm_subscribes']                                  = 'Абонементы';
+$lang['procrm_subscribe']                                   = 'Абонемент';
 $lang['categories']                                         = 'Категории';
 $lang['active']                                             = 'Активные';
 $lang['settings']                                           = 'Настройки';
@@ -37,3 +38,4 @@ $lang['empty']                                              = 'Пусто';
 $lang['permission_setting']                                 = 'Настройки';
 $lang['permission_active']                                  = 'Активные';
 $lang['active_subscribes']                                  = 'Активные абонементы';
+$lang['add_to_lead']                                        = 'Добавить к лиду';
