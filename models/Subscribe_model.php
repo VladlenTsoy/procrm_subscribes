@@ -37,7 +37,7 @@ class Subscribe_model extends App_Model
      * Вывод всех
      * @return bool
      */
-    public function getGetAll()
+    public function getAll()
     {
         $result = $this->db->get(db_prefix() . 'procrm_subscribes')->result_array();
         if ($result) {
