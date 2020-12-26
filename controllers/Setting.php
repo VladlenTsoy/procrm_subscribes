@@ -11,42 +11,68 @@ class Setting extends AdminController
 
     public function index()
     {
-        $data = ['title' => _l('settings')];
+        $data = [
+            'title' => _l('settings'),
+        ];
         $this->load->view('setting/index', $data);
     }
 
-    /**
-     *
-     * @param $categoryId
-     */
-    public function content($categoryId = false)
+
+    public function table()
     {
-        try {
-            if ($categoryId) {
-                $category = $this->category_model->getById($categoryId);
-                $data = ['category' => $category];
+        $post = $this->input->post();
+        $aColumns = ['id', 'category_id', 'title', 'time', 'duration', 'price', 'frost_days'];
 
-                echo json_encode([
-                    'status' => 'success',
-                    'html' => [
-                        'title' => $this->load->view('setting/tabs/tab_title', $data, true),
-                        'content' => $this->load->view('setting/tabs/tab_content', $data, true)
-                    ]
-                ]);
-            } else {
-                $categories = $this->category_model->getAll();
-                $data = ['categories' => $categories];
+        $sIndexColumn = 'id';
+        $sTable = db_prefix() . 'procrm_subscribes';
+        $sWhere = [];
 
-                echo json_encode([
-                    'status' => 'success',
-                    'html' => $this->load->view('setting/tabs/tabs', $data, true)
-                ]);
+        if (isset($post['category_id']) && $post['category_id'] !== 'all')
+            $sWhere[] = 'AND category_id = ' . $post['category_id'];
+
+        $result = data_tables_init($aColumns, $sIndexColumn, $sTable, [], $sWhere);
+        $output = $result['output'];
+        $rResult = $result['rResult'];
+
+        foreach ($rResult as $aRow) {
+            $row = [];
+            for ($i = 0; $i < count($aColumns); $i++) {
+                if ($i === 1) {
+                    $_category = $this->category_model->getById($aRow[$aColumns[$i]]);
+                    $row[] = $_category['title'];
+                } else if ($i === 2) {
+                    $_title = $aRow[$aColumns[$i]];
+                    $_title .= '<div class="row-options">';
+                    $_title .= '<a class="pointer edit-column" data-subscribe-id="' . $aRow['id'] . '">' . _l('edit') . '</a>';
+                    $_title .= ' | <a class="pointer text-danger delete-column" data-subscribe-id="' . $aRow['id'] . '" data-category-id="' . $aRow['category_id'] . '">' . _l('delete') . '</a>';
+                    $_title .= '</div>';
+                    $row[] = $_title;
+                } elseif ($i === 3) {
+                    $time = json_decode($aRow[$aColumns[$i]], true);
+                    $_time = $time['from']['hour'] . ':' . $time['from']['minute'] . ' - ' . $time['to']['hour'] . ':' . $time['to']['minute'];
+                    $row[] = $_time;
+                } elseif ($i === 5) {
+                    $_price = number_format($aRow[$aColumns[$i]], 0, ' ', ' ');
+                    $row[] = $_price;
+                } else
+                    $row[] = $aRow[$aColumns[$i]];
             }
-        } catch (Exception $e) {
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e
-            ]);
+
+            $output['aaData'][] = $row;
         }
+
+        echo json_encode($output);
+    }
+
+
+    public function formFilterBy()
+    {
+        $categories = $this->category_model->getAll();
+        $data = ['categories' => $categories];
+
+        echo json_encode([
+            'status' => 'success',
+            'html' => $this->load->view('setting/filter/form', $data, true)
+        ]);
     }
 }

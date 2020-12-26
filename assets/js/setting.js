@@ -235,33 +235,17 @@ class ProcrmSubscribeTable {
     }
 
     /**
-     * Вывод всех
-     */
-    fetchTabs = () => {
-        $.get(admin_url + 'procrm_subscribes/setting/content')
-            .done((response) => {
-                response = JSON.parse(response)
-                if (response.status === 'success') {
-                    this.$el.html(response.html)
-                        .find('.table-category')
-                        .map((key, e) => this.createDataTable(e.dataset.categoryId))
-                }
-            })
-    }
-
-    /**
      * События
      */
     events() {
         $(document).on('submit', '#create-subscribe-form', this.createSubscribe)
         $(document).on('submit', '#edit-subscribe-form', this.editSubscribe)
         $(document).on('click', '#btn-subscribe-modal', this.openCreateModal);
-        this.$el.on('click', '.edit-column', this.openEditModal);
-        this.$el.on('click', '.delete-column', this.deleteSubscribe);
+        $(document).on('click', '.edit-column', this.openEditModal);
+        $(document).on('click', '.delete-column', this.deleteSubscribe);
     }
 
     render() {
-        this.fetchTabs()
         this.events()
     }
 }
@@ -272,4 +256,36 @@ $(function () {
 
     tableClass.render()
     categoriesClass.render()
+});
+
+$(function () {
+    const SubscribesServerParams = {
+        category_id: '[name="category_id"]'
+    }
+
+    const table = initDataTable(`.table-subscribes`, admin_url + `procrm_subscribes/setting/table`, undefined, undefined, SubscribesServerParams, [0, 'desc']);
+
+    // Фильтрация таблицы
+    $(document).on('submit', '#form-filter-for-subscribes', function (e) {
+        e.preventDefault()
+        const formData = $(e.currentTarget).serializeArray()
+        formData.map(val => {
+            if (val.name === 'filter_category')
+                $('._filters [name="category_id"]').val(val.value)
+        })
+        table.ajax.reload();
+        $('#categories_modal_action').modal('hide')
+    })
+
+    // Открыть фильтрацию (MODAL)
+    $('#btn-filter-by').click(function (e) {
+        e.preventDefault()
+        $('#categories_modal_action').modal('show')
+        $.get(admin_url + 'procrm_subscribes/setting/formFilterBy')
+            .done(response => {
+                response = JSON.parse(response)
+                if (response.status === 'success')
+                    $('.modal-body-filter-by').html(response.html)
+            })
+    })
 });

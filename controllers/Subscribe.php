@@ -105,47 +105,4 @@ class Subscribe extends AdminController
             ]);
         }
     }
-
-
-    /**
-     * Таблица по категории id (DataTables)
-     * @param $categoryId
-     */
-    public function table($categoryId)
-    {
-        $aColumns = ['id', 'title', 'time', 'duration', 'price', 'frost_days'];
-
-        $sIndexColumn = 'id';
-        $sTable = db_prefix() . 'procrm_subscribes';
-
-        $result = data_tables_init($aColumns, $sIndexColumn, $sTable, [], ['AND category_id = ' . $categoryId]);
-        $output = $result['output'];
-        $rResult = $result['rResult'];
-
-        foreach ($rResult as $aRow) {
-            $row = [];
-            for ($i = 0; $i < count($aColumns); $i++) {
-                if ($i === 1) {
-                    $_title = $aRow[$aColumns[$i]];
-                    $_title .= '<div class="row-options">';
-                    $_title .= '<a class="pointer edit-column" data-subscribe-id="' . $aRow['id'] . '">' . _l('edit') . '</a>';
-                    $_title .= ' | <a class="pointer text-danger delete-column" data-subscribe-id="' . $aRow['id'] . '" data-category-id="' . $categoryId . '">' . _l('delete') . '</a>';
-                    $_title .= '</div>';
-                    $row[] = $_title;
-                } elseif ($i === 2) {
-                    $time = json_decode($aRow[$aColumns[$i]], true);
-                    $_time = $time['from']['hour'] . ':' . $time['from']['minute'] . ' - ' . $time['to']['hour'] . ':' . $time['to']['minute'];
-                    $row[] = $_time;
-                } elseif ($i === 4) {
-                    $_price = number_format($aRow[$aColumns[$i]], 0, ' ', ' ');
-                    $row[] = $_price;
-                } else
-                    $row[] = $aRow[$aColumns[$i]];
-            }
-
-            $output['aaData'][] = $row;
-        }
-
-        echo json_encode($output);
-    }
 }
