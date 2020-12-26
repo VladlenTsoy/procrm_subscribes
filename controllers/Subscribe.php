@@ -22,11 +22,10 @@ class Subscribe extends AdminController
         if ($subscribeId)
             echo json_encode([
                 'status' => 'success',
-                'category_id' => $data['category_id'],
                 'message' => _l('you_have_successfully_created_your_subscription')
             ]);
         else
-            echo json_encode(['status' => 'error']);
+            echo json_encode(['status' => 'error', 'message' => _l('unknown_error')]);
     }
 
 
@@ -44,10 +43,9 @@ class Subscribe extends AdminController
             echo json_encode([
                 'status' => 'success',
                 'message' => _l('you_have_successfully_edit_your_subscription'),
-                'category_id' => $data['category_id']
             ]);
         else
-            echo json_encode(['status' => 'error']);
+            echo json_encode(['status' => 'error', 'message' => _l('unknown_error')]);
     }
 
     /**
@@ -92,7 +90,7 @@ class Subscribe extends AdminController
                 ]);
             } else
                 echo json_encode([
-                    'status' => 'error',
+                    'status' => 'error', 'message' => _l('unknown_error')
                 ]);
         } else {
             $data = [

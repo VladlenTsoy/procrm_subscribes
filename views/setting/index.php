@@ -14,11 +14,6 @@
                             <?php include('category_button.php') ?>
                             <?php include('subscribe/editor_button.php') ?>
                         </div>
-<!--                        <div class="tabs-container-categories">-->
-<!--                            <div class="loading-block">-->
-<!--                                <i class="fa fa-spin fa-refresh"></i>-->
-<!--                            </div>-->
-<!--                        </div>-->
 
                         <?php echo render_datatable([
                             '#',

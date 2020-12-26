@@ -27,8 +27,8 @@ class Setting extends AdminController
         $sTable = db_prefix() . 'procrm_subscribes';
         $sWhere = [];
 
-        if (isset($post['category_id']) && $post['category_id'] !== 'all')
-            $sWhere[] = 'AND category_id = ' . $post['category_id'];
+        if (isset($post['filter_category_id']) && $post['filter_category_id'] !== 'all')
+            $sWhere[] = 'AND category_id = ' . $post['filter_category_id'];
 
         $result = data_tables_init($aColumns, $sIndexColumn, $sTable, [], $sWhere);
         $output = $result['output'];

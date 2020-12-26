@@ -5,45 +5,6 @@ class ProcrmSubscribesCategories {
     btnCategoryDelete = null
     formCategories = null
 
-    constructor({createDataTable}) {
-        this.createDataTable = createDataTable
-    }
-
-    /**
-     * Добавление таб
-     * @param categoryIds
-     * @returns {Promise<void>}
-     */
-    addTabTitleAndContentInner = async (categoryIds) => {
-        if (categoryIds && categoryIds.length > 0) {
-            await Promise.all(
-                categoryIds.map(async categoryId => {
-                    let response = await $.get(`${admin_url}/procrm_subscribes/setting/content/${categoryId}`)
-                    response = JSON.parse(response)
-
-                    if (response.status === 'success') {
-                        $('.nav-tabs-categories').append(response.html.title)
-                        $('.tab-tabs-categories').append(response.html.content)
-                        this.createDataTable(categoryId)
-                    }
-                })
-            )
-        }
-    }
-
-    /**
-     * Удаление табов
-     * @param ids
-     */
-    deleteTabs = (ids) => {
-        if (ids && ids.length > 0) {
-            ids.map(id => {
-                $(`.li_tab_title_${id}`).remove()
-                $(`#tab_category_${id}`).remove()
-            })
-        }
-    }
-
     /**
      * Изменить категории
      * @param e
@@ -60,9 +21,6 @@ class ProcrmSubscribesCategories {
         if (response.status === 'success') {
             alert_float('success', response.message)
             $('#procrmSubscribesCategoriesModal').modal('hide')
-
-            this.deleteTabs(response.deleteCategoryIds)
-            await this.addTabTitleAndContentInner(response.categoryIds)
         }
     }
 
@@ -129,49 +87,49 @@ class ProcrmSubscribesCategories {
 
 
 class ProcrmSubscribeTable {
-    constructor() {
-        this.$el = $('.tabs-container-categories')
-        // this.$el = $('.btn-create-subscribe-block')
+    filterParams = {
+        filter_category_id: '[name="filter_category_id"]'
+    }
+
+    /**
+     * Инитиализация таблицы
+     */
+    initDataTable = () => {
+        this.table = initDataTable(`.table-subscribes`, admin_url + `procrm_subscribes/setting/table`, undefined, undefined, this.filterParams, [0, 'desc']);
     }
 
     /**
      * Обновление таблицы (DataTables)
-     * @param categoryId
      */
-    updateDataTable = (categoryId) => {
-        $(`.table-category-${categoryId}`).DataTable().ajax.reload()
+    updateDataTable = () => {
+        this.table.ajax.reload();
     }
 
-    /**
-     * Создание таблицы (DataTables)
-     * @param categoryId
-     */
-    createDataTable = (categoryId) => {
-        initDataTable(`.table-category-${categoryId}`, admin_url + `procrm_subscribes/subscribe/table/${categoryId}`, ['undefined'], ['undefined'], undefined, [0, 'desc']);
-    }
 
     /**
      * Удаление абонемента
      * @param e
-     * @returns {Promise<void>}
      */
     deleteSubscribe = async (e) => {
         const result = confirm_delete()
-        if (!result) return result;
+        if (!result) return
+        //
         const subscribeId = e.currentTarget.dataset.subscribeId
-        const categoryId = e.currentTarget.dataset.categoryId
         $.get(admin_url + 'procrm_subscribes/subscribe/delete/' + subscribeId)
             .done(response => {
                 response = JSON.parse(response)
-
                 if (response.status === 'success') {
-                    this.updateDataTable(categoryId)
+                    this.updateDataTable()
                     alert_float('success', response.message)
                 } else
                     alert_float('error', response.message)
             })
     }
 
+    /**
+     * Редактирование
+     * @param e
+     */
     editSubscribe = (e) => {
         e.preventDefault()
         const data = $('#edit-subscribe-form').serialize()
@@ -179,10 +137,11 @@ class ProcrmSubscribeTable {
             .done((response) => {
                 response = JSON.parse(response)
                 if (response.status === 'success') {
-                    this.updateDataTable(response.category_id)
+                    this.updateDataTable()
                     alert_float('success', response.message)
                     $('#editorSubscribeModal').modal('hide')
-                }
+                } else
+                    alert_float('error', response.message)
             })
     }
 
@@ -198,10 +157,11 @@ class ProcrmSubscribeTable {
             .done((response) => {
                 response = JSON.parse(response)
                 if (response.status === 'success') {
-                    this.updateDataTable(response.category_id)
+                    this.updateDataTable()
                     alert_float('success', response.message)
                     $('#editorSubscribeModal').modal('hide')
-                }
+                } else
+                    alert_float('error', response.message)
             })
     }
 
@@ -234,6 +194,30 @@ class ProcrmSubscribeTable {
             })
     }
 
+    // Открыть фильтрацию (MODAL)
+    openFilterHandler = (e) => {
+        e.preventDefault()
+        $('#categories_modal_action').modal('show')
+        $.get(admin_url + 'procrm_subscribes/setting/formFilterBy')
+            .done(response => {
+                response = JSON.parse(response)
+                if (response.status === 'success')
+                    $('.modal-body-filter-by').html(response.html)
+            })
+    }
+
+    // Фильтрация таблицы
+    submitFilterHandler = (e) => {
+        e.preventDefault()
+        const formData = $(e.currentTarget).serializeArray()
+        formData.map(val => {
+            if (val.name === 'filter_category')
+                $('._filters [name="filter_category_id"]').val(val.value)
+        })
+        this.updateDataTable()
+        $('#categories_modal_action').modal('hide')
+    }
+
     /**
      * События
      */
@@ -243,49 +227,20 @@ class ProcrmSubscribeTable {
         $(document).on('click', '#btn-subscribe-modal', this.openCreateModal);
         $(document).on('click', '.edit-column', this.openEditModal);
         $(document).on('click', '.delete-column', this.deleteSubscribe);
+        $(document).on('click', '#btn-filter-by', this.openFilterHandler);
+        $(document).on('submit', '#form-filter-for-subscribes', this.submitFilterHandler)
     }
 
     render() {
+        this.initDataTable()
         this.events()
     }
 }
 
 $(function () {
     const tableClass = new ProcrmSubscribeTable()
-    const categoriesClass = new ProcrmSubscribesCategories({createDataTable: tableClass.createDataTable})
+    const categoriesClass = new ProcrmSubscribesCategories()
 
     tableClass.render()
     categoriesClass.render()
-});
-
-$(function () {
-    const SubscribesServerParams = {
-        category_id: '[name="category_id"]'
-    }
-
-    const table = initDataTable(`.table-subscribes`, admin_url + `procrm_subscribes/setting/table`, undefined, undefined, SubscribesServerParams, [0, 'desc']);
-
-    // Фильтрация таблицы
-    $(document).on('submit', '#form-filter-for-subscribes', function (e) {
-        e.preventDefault()
-        const formData = $(e.currentTarget).serializeArray()
-        formData.map(val => {
-            if (val.name === 'filter_category')
-                $('._filters [name="category_id"]').val(val.value)
-        })
-        table.ajax.reload();
-        $('#categories_modal_action').modal('hide')
-    })
-
-    // Открыть фильтрацию (MODAL)
-    $('#btn-filter-by').click(function (e) {
-        e.preventDefault()
-        $('#categories_modal_action').modal('show')
-        $.get(admin_url + 'procrm_subscribes/setting/formFilterBy')
-            .done(response => {
-                response = JSON.parse(response)
-                if (response.status === 'success')
-                    $('.modal-body-filter-by').html(response.html)
-            })
-    })
 });

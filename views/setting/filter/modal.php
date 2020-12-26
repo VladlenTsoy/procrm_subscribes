@@ -1,5 +1,5 @@
 <div class="_filters _hidden_inputs hidden">
-    <?php echo form_hidden('category_id', 'all'); ?>
+    <?php echo form_hidden('filter_category_id', 'all'); ?>
 </div>
 
 <button
