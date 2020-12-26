@@ -34,18 +34,15 @@ class Subscribe_model extends App_Model
     }
 
     /**
-     * Вывод по категории
-     * @param $categoryId
+     * Вывод всех
      * @return bool
      */
-    public function getGetCategoryId($categoryId)
+    public function getGetAll()
     {
-        $this->db->where('category_id', $categoryId);
         $result = $this->db->get(db_prefix() . 'procrm_subscribes')->result_array();
         if ($result) {
             return $result;
         }
-
         return false;
     }
 
