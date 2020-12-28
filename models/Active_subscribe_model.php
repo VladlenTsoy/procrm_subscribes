@@ -17,4 +17,20 @@ class Active_subscribe_model extends App_Model
 
         return false;
     }
+
+    /**
+     *
+     * @param $id
+     * @param $data
+     * @return boolean
+     */
+    public function update($id, $data)
+    {
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'procrm_active_subscribes', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
 }

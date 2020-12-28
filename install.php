@@ -43,6 +43,7 @@ if (!$CI->db->table_exists(db_prefix() . 'procrm_active_subscribes')) {
   `subscribe_id` int(11) NOT NULL,
   `lead_id` int(11) NOT NULL,
   `used_frost_days` int(11) NOT NULL,
+  `status` ENUM('active', 'frozen', 'past') DEFAULT 'active',
   `created_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
 

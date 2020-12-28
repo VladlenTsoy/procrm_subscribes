@@ -30,6 +30,7 @@ class Active extends AdminController
             db_prefix() . 'procrm_active_subscribes.id as id',
             db_prefix() . 'procrm_subscribes.title as subscribe',
             db_prefix() . 'leads.name as lead',
+            db_prefix() . 'procrm_active_subscribes.status as status',
             'used_frost_days',
             'created_at',
             db_prefix() . 'procrm_subscribes.duration as duration',
@@ -58,16 +59,22 @@ class Active extends AdminController
             $createdAt = strtotime($aRow['created_at']);
             $endAt = strtotime('+' . $aRow['duration'] . ' month');
             $datediff = $endAt - $createdAt;
+            $status = '<div class="badge badge-success">Активный</div>';
+            if ($aRow['status'] === 'frozen')
+                $status = '<div class="badge badge-primary">Замороженный</div>';
+            elseif ($aRow['status'] === 'past')
+                $status = '<div class="badge badge-success">Законченный</div>';
+
 
             $row = [];
             $row[] = $aRow['id'];
             $row[] = $aRow['subscribe'];
             $row[] = $aRow['lead'];
-            $row[] = '<div class="badge badge-success">Активный</div>';
+            $row[] = $status;
             $row[] = round($datediff / (60 * 60 * 24)) . ' д';
             $row[] = $aRow['used_frost_days'] . ' д <small class="text-muted">\</small> ' . $aRow['frost_days'] . ' д';
             $row[] = date('d-m-Y', $createdAt);
-            $row[] = '<button class="btn btn-primary btn-edit-active-subscribe"><i class="fa fa-edit"></i></button>';
+            $row[] = '<button class="btn btn-primary btn-edit-active-subscribe" data-active-id="' . $aRow['id'] . '" data-active-status="' . $aRow['status'] . '"><i class="fa fa-edit"></i></button>';
 
             $output['aaData'][] = $row;
         }
@@ -82,6 +89,20 @@ class Active extends AdminController
     {
         $post = $this->input->post();
         $this->active_subscribe_model->create($post);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Вы успешно добавили абонемент!'
+        ]);
+    }
+
+    /**
+     * @param $id
+     */
+    public function update($id)
+    {
+        $post = $this->input->post();
+        $this->active_subscribe_model->update($id, $post);
 
         echo json_encode([
             'status' => 'success',
